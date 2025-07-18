@@ -21,7 +21,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. FULL‑DEPTH CHECKOUT
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # ensure we fetch all history so gh-pages can be seen/created
+          fetch-tags: true
 
       - name: Configure Git Credentials
         run: |
@@ -43,31 +47,28 @@ jobs:
 
       - run: pip install mkdocs-material
 
-      # ————— Begin Mike‑based deploy steps —————
+      # ————— Begin SHA & Injection —————
 
       - name: Get commit SHA
         run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Inject SHA into docs (Option B)
+      - name: Inject SHA into docs
         run: |
-          sed -i "s/BUILD_SHA_HERE/${SHA}/g" documentation/docs/index.md
+          sed -i "s/BUILD_SHA_HERE/${SHA}/g" documentation/docs/news.md
 
-      - name: Install MkDocs + Mike
+      - name: Install Mike
         run: pip install mike
+
+      # OPTIONAL: Fetch the gh-pages branch if it already exists
+      - name: Fetch existing gh-pages (if any)
+        run: git fetch origin gh-pages:gh-pages || true
+
+      # ————— Deploy with Mike —————
 
       - name: Deploy docs with mike
         working-directory: documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 1. Build & deploy this commit under its SHA folder:
-          mike deploy "${SHA}" \
-            --branch gh-pages \
-            --push
-
-          # 2. Make it the default so `/<repo>/` always shows latest:
-          mike set-default "${SHA}" \
-            --branch gh-pages \
-            --push
-
-      # ————— End Mike‑based deploy steps —————
+          mike deploy "${SHA}" --branch gh-pages --push
+          mike set-default "${SHA}" --branch gh-pages --push

@@ -94,9 +94,8 @@ _Current build:_ `BUILD_SHA_HERE`
 ---
 
 ## Quick Links
-- [Release Notes](./release-notes.md)
+
 - [mateusloubach](https://github.com/mateusloubach/)
-- [Deployment Guide](./deployment-guide.md)
-- [Rollback Procedures](./rollback-procedures.md)
+
 - [Build Pipeline](https://build.agency.com/up-commission)
   [v2.3.1]: https://mateusloubach.github.io/up-commission/277edf2/

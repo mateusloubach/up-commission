@@ -1,0 +1,73 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'documentation/**'
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - 'documentation/**'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+
+      - run: pip install mkdocs-material
+
+      # ————— Begin Mike‑based deploy steps —————
+
+      - name: Get commit SHA
+        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Inject SHA into docs (Option B)
+        run: |
+          sed -i "s/BUILD_SHA_HERE/${SHA}/g" documentation/docs/index.md
+          
+      - name: Install MkDocs + Mike
+        run: pip install mike
+
+      - name: Deploy docs with mike
+        working-directory: documentation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Build & deploy this commit under its SHA folder:
+          mike deploy "${SHA}" \
+            --branch gh-pages \
+            --push origin
+
+          # 2. Make it the default so `/<repo>/` always shows latest:
+          mike set-default "${SHA}" \
+            --branch gh-pages \
+            --push origin
+
+      # ————— End Mike‑based deploy steps —————

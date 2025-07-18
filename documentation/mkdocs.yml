@@ -1,0 +1,70 @@
+site_name: Documentação do UP Commission
+site_url: https://up-commission.vercel.app/
+theme:
+  language: pt-BR
+  name: material
+  features:
+    - navigation.footer
+    - navigation.tabs
+    - navigation.instant
+  palette:
+    # Dark Mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Dark mode
+      primary: black
+      accent: light blue
+
+    # Light Mode
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Light mode
+      primary: white
+      accent: black
+  icon:
+    repo: fontawesome/brands/gitlab
+nav:
+  - Home: index.md
+plugins:
+  - search:
+      separator: '[\s\-\.]+'
+      lang:
+        - en
+        - de
+        - pt-BR
+
+extra:
+  version:
+    provider: mike
+  generator: false
+extra_css:
+  - stylesheets/extra.css
+
+
+# Code For Allowing Icons
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences

@@ -51,7 +51,7 @@ jobs:
       - name: Inject SHA into docs (Option B)
         run: |
           sed -i "s/BUILD_SHA_HERE/${SHA}/g" documentation/docs/index.md
-          
+
       - name: Install MkDocs + Mike
         run: pip install mike
 
@@ -63,11 +63,11 @@ jobs:
           # 1. Build & deploy this commit under its SHA folder:
           mike deploy "${SHA}" \
             --branch gh-pages \
-            --push origin
+            --push
 
           # 2. Make it the default so `/<repo>/` always shows latest:
           mike set-default "${SHA}" \
             --branch gh-pages \
-            --push origin
+            --push
 
       # ————— End Mike‑based deploy steps —————

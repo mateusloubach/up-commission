@@ -27,6 +27,7 @@ theme:
     repo: fontawesome/brands/gitlab
 nav:
   - Home: index.md
+  - News: news.md
 plugins:
   - search:
       separator: '[\s\-\.]+'
